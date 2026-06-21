@@ -1,0 +1,58 @@
+<1번>
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Account {
+	string name;
+	int id;
+	int balance;
+public:
+	Account(string name, int id, int balance) { this->name = name;this->id = id;this->balance = balance;}
+	void deposit(int n) { balance += n; }
+	int withdraw(int n) { balance -= n; return n; }
+	string getOwner() { return name; }
+	int inquiry() { return balance; }
+};
+
+int main()
+{
+	Account a("youn", 1, 5000);
+	a.deposit(50000);
+	cout << a.getOwner() << "의 잔액은 " << a.inquiry() << endl;
+	int n = a.withdraw(20000);
+	cout << a.getOwner() << "의 잔액은 " << a.inquiry() << endl;
+	
+	return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<2번>
+
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+class Random {
+public:
+	Random() { srand((unsigned)time(NULL)); }
+	int next() { return rand() % (RAND_MAX - 0 + 1); }
+	int nextInRange(int min, int max) { return rand() % (max - min + 1) + min; }
+};
+
+int main()
+{
+	Random r;
+	cout << "0에서부터 " << RAND_MAX << "사이의 정수 10개 출력" << endl;
+	for (int i = 0;i < 10;i++)
+		cout << r.next() << ' ';
+	cout << "\n2에서 4까지의 랜덤 정수 10개" << endl;
+	for (int i = 0;i < 10;i++)
+		cout << r.nextInRange(2, 4) << ' ';
+
+
+	return 0;
+}

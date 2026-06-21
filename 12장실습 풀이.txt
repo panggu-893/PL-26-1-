@@ -1,0 +1,92 @@
+<1번>
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+int main()
+{
+	const char* srcFile = "C:\\Users\\SJH\\Desktop\\학교\\2학년 1학기\\프로그래밍 언어\\실습\\Lab12\\passwd.txt";
+	const char* destFile = "C:\\Users\\SJH\\Desktop\\학교\\2학년 1학기\\프로그래밍 언어\\실습\\Lab12\\copy.txt";
+	
+	ifstream fin;
+	ofstream fout;
+
+	fin.open(srcFile);
+	if (!fin)
+	{
+		cout << "Failed to open src" << endl;
+		return 0;
+	}
+
+	fout.open(destFile);
+	if (!fout)
+	{
+		cout << "Failed to open dest" << endl;
+		return 0;
+	}
+
+	int ch;
+	while ((ch = fin.get()) != EOF)
+	{
+		fout.put(toupper(ch));
+	}
+
+	fin.close();
+	fout.close();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<2번>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+using namespace std;
+
+int main()
+{
+	vector<string> dic;
+
+	const char* source = "C:\\Users\\SJH\\Desktop\\학교\\2학년 1학기\\프로그래밍 언어\\실습\\Lab12\\words.txt";
+	
+	ifstream fin;
+	fin.open(source);
+	if (!fin)
+	{
+		cout << "FAILED TO OPEN SOURCE FILE" << endl;
+		return 0;
+	}
+
+	string word;
+	while (getline(fin, word))
+	{
+		dic.push_back(word);
+	}
+	cout << "words.txt 로딩 완료" << endl;
+
+	cout << "검색을 시작합니다. 단어를 입력해주세요." << endl;
+	while (true)
+	{
+		cout << "단어(종료는 exit) >> ";
+		getline(cin, word);
+		if (word == "exit")
+			break;
+
+		for (int i=0;i<dic.size();i++)
+		{
+			int count = 0;
+
+			if (dic[i].length() == word.length())
+			{
+				for (int j = 0;j < word.length();j++)
+				{
+					if (dic[i][j] == word[j])
+						count++;
+				}
+			}
+			if (count == word.length()-1)
+				cout << dic[i] << endl;
+		}
+	}
+}

@@ -1,0 +1,252 @@
+<1번>
+(1)
+#include <iostream>
+using namespace std;
+
+int add(int a[],int size)
+{
+	int sum = 0;
+	for (int i = 0;i < size;i++)
+		sum += a[i];
+	return sum;
+}
+
+int add(int a[], int size, int b[])
+{
+	int sum = 0;
+	for (int i = 0;i < size;i++)
+		sum += a[i] + b[i];
+	return sum;
+}
+
+int main()
+{
+	int a[] = { 1,2,3,4,5 };
+	int b[] = { 6,7,8,9,10 };
+	int c = add(a, 5);
+	int d = add(a, 5, b);
+	cout << c << endl;
+	cout << d << endl;
+
+	return 0;
+}
+
+(2)
+#include <iostream>
+using namespace std;
+
+int add(int a[], int size, int b[]=nullptr)
+{
+	if(b!=nullptr)
+	{
+		int sum = 0;
+		for (int i = 0;i < size;i++)
+			sum += a[i] + b[i];
+		return sum;
+	}
+	else
+	{
+		int sum = 0;
+		for (int i = 0;i < size;i++)
+			sum += a[i];
+		return sum;
+	}
+}
+
+int main()
+{
+	int a[] = { 1,2,3,4,5 };
+	int b[] = { 6,7,8,9,10 };
+	int c = add(a, 5);
+	int d = add(a, 5, b);
+	cout << c << endl;
+	cout << d << endl;
+
+	return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<2번>
+
+(1)
+#include <iostream>
+using namespace std;
+
+int big(int a, int b)
+{
+	int max;
+	if (a > b) max = a;
+	else max = b;
+	if (max > 100) return 100;
+	else return max;
+}
+
+int big(int a, int b, int limit)
+{
+	int max;
+	if (a > b) max = a;
+	else max = b;
+	if (max > limit)return limit;
+	else return max;
+}
+
+int main()
+{
+	int x = big(3, 5);
+	int y = big(300, 60);
+	int z = big(30, 60, 50);
+
+	cout << x << ' ' << y << ' ' << z << endl;
+
+	return 0;
+}
+
+(2)
+#include <iostream>
+using namespace std;
+
+int big(int a, int b, int limit=100)
+{
+	int max;
+	if (a > b) max = a;
+	else max = b;
+	if (max > limit)return limit;
+	else return max;
+}
+
+int main()
+{
+	int x = big(3, 5);
+	int y = big(300, 60);
+	int z = big(30, 60, 50);
+
+	cout << x << ' ' << y << ' ' << z << endl;
+
+	return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<3번>
+
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+class Random {
+public:
+	static void seed() { srand((unsigned)time(NULL)); }
+	static int nextInt(int min = 0, int max = RAND_MAX) { return rand() % (max - min + 1) + min; }
+	static char nextAlphabet();
+	static double nextDouble() { return rand() / (double)RAND_MAX; }
+};
+
+char Random::nextAlphabet()
+{
+	int ls = rand() % 2;
+	switch (ls)
+	{
+	case 0:
+		return rand() % (90 - 65 + 1) + 65;
+		break;
+	case 1:
+		return rand() % (122 - 97 + 1) + 97;
+		break;
+	}
+}
+
+int main()
+{
+	Random::seed();
+	cout << "1에서 100까지의 랜덤 정수 10개" << endl;
+	for (int i = 0;i < 10;i++)
+		cout << Random::nextInt(1, 100) << ' ';
+	cout << "\n랜덤 알파벳 10개" << endl;
+	for (int i = 0;i < 10;i++)
+		cout << Random::nextAlphabet() << ' ';
+	cout << "\n랜덤 실수 10개" << endl;
+	for (int i = 0;i < 10;i++)
+		cout << Random::nextDouble() << ' ';
+
+	return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<4번>
+
+#include <iostream>
+using namespace std;
+
+class ArrayUtility2 {
+public:
+	static int* concat(int s1[], int s2[], int size);
+	static int* remove(int s1[], int s2[], int size, int& retSize);
+};
+
+int* ArrayUtility2::concat(int s1[], int s2[], int size)
+{
+	int* p = new int[size * 2];
+	for (int i = 0;i < size;i++)
+	{
+		p[i] = s1[i];
+		p[size + i] = s2[i];
+	}
+
+	return p;
+}
+
+int* ArrayUtility2::remove(int s1[], int s2[], int size, int& retSize)
+{
+	retSize = size;
+	for (int i = 0;i < size;i++)
+	{
+		for (int j = 0;j < size;j++)
+		{
+			if (s2[i] == s1[j])
+			{
+				s1[j] = -10000;
+				retSize--;
+			}
+		}
+	}
+	
+	int index = 0;
+	int* pp = new int[retSize];
+	for (int i = 0;i < size;i++)
+	{
+		if (s1[i] != -10000)
+			pp[index++] = s1[i];
+	}
+
+	return pp;
+}
+
+int main()
+{
+	int a[5] = { 0 };
+	int b[5] = { 0 };
+	cout << "a배열에 넣을 정수 5개 입력>>";
+	for (int i = 0;i < 5;i++)
+		cin >> a[i];
+	cout << "b배열에 넣을 정수 5개 입력>>";
+	for (int i = 0;i < 5;i++)
+		cin >> b[i];
+
+	cout << "합친 정수 배열 출력>>" << endl;
+	int* p = ArrayUtility2::concat(a, b, 5);
+	for (int i = 0;i < 10;i++)
+		cout << *(p + i) << ' ';
+	
+	int retSize;
+	int* pp = ArrayUtility2::remove(a, b, 5, retSize);
+	cout << "\n배열 a에서 배열 b를 뺸 결과 출력. 개수는 " << retSize << endl;
+	for (int i = 0;i < retSize;i++)
+		cout << *(pp + i) << ' ';
+
+	delete[]p;
+	delete[]pp;
+	return 0;
+}

@@ -1,0 +1,94 @@
+<1번>
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main()
+{
+	for (int i = 0;i < 4;i++)
+		cout << setw(4) << "dec" << setw(5) << "hexa" << setw(5) << "char";
+	cout << endl;
+	
+	for (int i = 0;i < 4;i++)
+		cout << setw(4) << "---" << setw(5) << "----" << setw(5) << "----";
+	cout << endl;
+
+	for (int i = 0;i < 128;i++)
+	{
+		if (isprint(i)) cout << dec << setw(4) << i << hex << setw(5) << i << setw(5) << (char)i;
+		else cout << dec << setw(4) << i << hex << setw(5) << i << setw(5) << '.';
+		if (i % 4 == 3) cout << endl;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<2번>
+#include <iostream>
+#include <iomanip>
+#include <string>
+using namespace std;
+
+class Phone {
+	string name;
+	string telnum;
+	string address;
+public:
+	Phone(string n="", string t="", string a="") : name(n), telnum(t), address(a) {}
+	friend istream& operator>>(istream& in, Phone& p);
+	friend ostream& operator<<(ostream& out, const Phone& p);
+};
+
+istream& operator>>(istream& in, Phone& p)
+{
+	cout << "이름: ";
+	getline(in, p.name);
+	cout << "전화번호: ";
+	getline(in, p.telnum);
+	cout << "주소: ";
+	getline(in, p.address);
+	return in;
+}
+
+ostream& operator<<(ostream& out, const Phone& p)
+{
+	cout << "(" << p.name << ',' << p.telnum << ',' << p.address << ')';
+	return out;
+}
+
+int main()
+{
+	Phone girl, boy;
+	cin >> girl >> boy;
+	cout << girl << endl << boy << endl;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<3번>
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+istream& prompt(istream& in)
+{
+	cout << "암호?";
+	return in;
+}
+
+int main()
+{
+	string password;
+	while (true)
+	{
+		cin >> prompt >> password;
+		if (password == "C++")
+		{
+			cout << "login success!!" << endl;
+			break;
+		}
+		else
+			cout << "login failed..." << endl;
+	}
+}

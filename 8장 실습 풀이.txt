@@ -1,0 +1,442 @@
+<1번>
+#pragma once
+#include "BaseArray.h"
+using namespace std;
+
+class MyQueue : public BaseArray {
+	int enindex, deindex;
+public:
+	MyQueue(int n = 100) : BaseArray(n) { enindex = deindex = 0; }
+	void enqueue(int n);
+	int  dequeue();
+	int length() { return enindex - deindex; }
+	int capacity() { return getCapacity(); }
+};
+
+#include "MyQueue.h"
+using namespace std;
+
+void MyQueue::enqueue(int n)
+{
+	if (enindex <= getCapacity())
+	{
+		put(enindex++, n);
+	}
+	else
+		return;
+}
+
+int MyQueue::dequeue()
+{
+	if (deindex <= enindex)
+	{
+		int n = get(deindex++);
+		return n;
+	}
+	else
+		return -999;
+}
+
+#include <iostream>
+#include "MyQueue.h"
+using namespace std;
+
+int main()
+{
+	MyQueue mQ(100);
+	int n;
+	cout << "큐에 삽입할 5개의 정수 입력>>";
+	for (int i = 0;i < 5;i++)
+	{
+		cin >> n;
+		mQ.enqueue(n);
+	}
+	cout << "큐의 용랑: " << mQ.capacity() << ", 큐의 크기: " << mQ.length() << endl;
+	cout << "큐의 원소를 순서대로 제거하여 출력>> ";
+	while (mQ.length() != 0)
+	{
+		cout << mQ.dequeue() << ' ';
+	}
+	cout << endl << "큐의 현재 크기: " << mQ.length() << endl;
+
+	return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<2번>
+#pragma once
+#include "BaseArray.h"
+using namespace std;
+
+class MyStack : public BaseArray {
+	int tos;
+public:
+	MyStack(int n) :BaseArray(n) { tos = 0; }
+	void push(int n);
+	int pop();
+	int capacity() { return getCapacity(); }
+	int length() { return tos; }
+};
+
+#include "MyStack.h"
+using namespace std;
+
+void MyStack::push(int n)
+{
+	if (tos <= getCapacity())
+	{
+		put(tos++, n);
+	}
+	else return;
+}
+
+int MyStack::pop()
+{
+	if (--tos >= 0)
+	{
+		int n;
+		n = get(tos);
+		return n;
+	}
+	else return -999999999;
+}
+
+#include <iostream>
+#include "MyStack.h"
+using namespace std;
+
+int main()
+{
+	MyStack mStack(100);
+	int n;
+	cout << "스택에 삽입할 5개의 정수 입력>> ";
+	for (int i = 0;i < 5;i++)
+	{
+		cin >> n;
+		mStack.push(n);
+	}
+	cout << "스택 용량: " << mStack.capacity() << ", 스택 크기: " << mStack.length() << endl;
+	cout << "스택의 모든 원소를 팝하여 출력>> ";
+	while (mStack.length() != 0)
+	{
+		cout << mStack.pop() << ' ';
+	}
+	cout << endl << "스택의 현재 크기: " << mStack.length() << endl;
+
+	return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<1,2번>(다른 방법)
+#include <iostream>
+using namespace std;
+
+class BaseArray {
+	int capacity;
+	int* mem;
+protected:
+	BaseArray(int capacity = 100) { this->capacity = capacity; mem = new int[capacity]; }
+	~BaseArray() { delete[] mem; }
+	void put(int index, int val) { mem[index] = val; }
+	int get(int index) { return mem[index]; }
+	int getCapacity() { return capacity; }
+};
+
+class MyQueue : public BaseArray {
+	int head, tail;
+public:
+	MyQueue(int cap = 100) : BaseArray(cap) { head = tail = 0; }
+	void enqueue(int n) { if (tail >= getCapacity())return; else put(tail++, n); }
+	int dequeue() { if (tail < head) return NULL; else return get(head++); }
+	int capacity() { return getCapacity(); }
+	int length() { return tail - head; }
+};
+
+class MyStack : public BaseArray {
+	int tos;
+public:
+	MyStack(int cap = 100) :BaseArray(cap) { tos = 0; }
+	void push(int n) { if (tos >= getCapacity()) return; else put(tos++, n); }
+	int pop() { if (tos <= 0) return NULL; else return get(--tos); }
+	int capacity() { return getCapacity(); }
+	int length() { return tos; }
+};
+
+int main()
+{
+	MyQueue mq(100);
+	MyStack ms(100);
+
+	int m, n;
+	cout << "큐에 삽입할 정수 5개 입력>> ";
+	for (int i = 0;i < 5;i++)
+	{
+		cin >> m;
+		mq.enqueue(m);
+	}
+
+	cout << "스택에 삽입할 정수 5개 입력>> ";
+	for (int i = 0;i < 5;i++)
+	{
+		cin >> n;
+		ms.push(n);
+	}
+
+	cout << "큐의 용량 : " << mq.capacity() << ", 큐의 크기 : " << mq.length() << endl;
+	cout << "스택 용량 : " << ms.capacity() << ", 스택 크기 : " << ms.length() << endl;
+	
+	cout << "큐의 모든 원소를 순서대로 제거하여 출력>>";
+	while (mq.length() != 0)
+	{
+		cout << mq.dequeue() << ' ';
+	}
+	cout << "\n큐의 현재 크기 : " << mq.length() << endl;
+	
+	cout << "스택의 모든 원소를 팝하여 출력>>";
+	while (ms.length() != 0)
+	{
+		cout << ms.pop() << ' ';
+	}
+	cout << "\n스택의 현재 크기 : " << ms.length() << endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<3번>
+#pragma once
+#include <iostream>
+#include <string>
+using namespace std;
+
+class BasePrinter {
+	string model, manufacturer;
+	int availableCount;
+protected:
+	BasePrinter(string model = "", string manufacturer = "", int availableCount = 0) { this->model = model; this->manufacturer = manufacturer; this->availableCount = availableCount; }
+	int getAvailableCount() { return availableCount; }
+	bool print(int pages)
+	{
+		if (availableCount >= pages) { availableCount -= pages; return true; }
+		else return false;
+	}
+	void show() { cout << model << ", " << manufacturer << ", " << " 남은 종이 " << availableCount << "장, "; }
+};
+
+#pragma once
+#include "BasePrinter.h"
+#include <string>
+using namespace std;
+
+class InkjetPrinter : public BasePrinter {
+	int availableInk;
+public:
+	InkjetPrinter(string model = "", string manufacturer = "", int availableCount = 0, int availableInk = 0) :BasePrinter(model, manufacturer, availableCount) { this->availableInk = availableInk; }
+	void printInkjet(int pages);
+	void InkjetShow() { show(); cout << "남은 잉크 " << availableInk << endl; }
+};
+
+#pragma once
+#include "BasePrinter.h"
+#include <string>
+using namespace std;
+
+class LaserPrinter :public BasePrinter {
+	int availableToner;
+public:
+	LaserPrinter(string model = "", string manufacturer = "", int availableCount = 0, int availableToner = 0) :BasePrinter(model, manufacturer, availableCount) { this->availableToner = availableToner; }
+	void printLaser(int pages);
+	void LaserShow() { show(); cout << "남은 토너 " << availableToner << endl; }
+};
+
+#include "InkjetPrinter.h"
+using namespace std;
+
+void InkjetPrinter::printInkjet(int pages)
+{
+	if (availableInk >= pages)
+	{
+		if (print(pages))
+		{
+			availableInk -= pages;
+			cout << "프린트하였습니다." << endl;
+		}
+		else
+		{
+			cout << "용지가 부족하여 출력 불가능" << endl;
+			return;
+		}
+	}
+	else
+	{
+		cout << "잉크가 부족하여 출력 불가능" << endl;
+		return;
+	}
+}
+
+#include "LaserPrinter.h"
+using namespace std;
+
+void LaserPrinter::printLaser(int pages)
+{
+	if (availableToner >= pages)
+	{
+		if (print(pages))
+		{
+			availableToner -= pages;
+			cout << "프린트하였습니다." << endl;
+		}
+		else
+		{
+			cout << "용지가 부족하여 출력 불가능" << endl;
+			return;
+		}
+	}
+	else
+	{
+		cout << "토너가 부족하여 출력 불가능" << endl;
+		return;
+	}
+}
+
+#include "LaserPrinter.h"
+#include "InkjetPrinter.h"
+using namespace std;
+
+int main()
+{
+	InkjetPrinter Ink("Officejet40", "HP", 5, 10);
+	LaserPrinter Laser("SCX-6X45", "삼성전자", 3, 20);
+	cout << "현재 작동중인 2 대의 프린터는 아래와 같다\n";
+	Ink.InkjetShow();
+	Laser.LaserShow();
+	while (1)
+	{
+		cout << "프린터(1:잉크젯, 2:레이저)와 매수 입력>> ";
+		int printer, pages;
+		cin >> printer >> pages;
+		switch (printer)
+		{
+		case 1:
+			Ink.printInkjet(pages);
+			break;
+		case 2:
+			Laser.printLaser(pages);
+			break;
+		}
+		Ink.InkjetShow();
+		Laser.LaserShow();
+		cout << "계속 프린트 하시겠습니까?(y/n)>> ";
+		char process;
+		cin >> process;
+		if (process == 'n') break;
+	}
+	cout << "프린트가 종료되었습니다." << endl;
+
+	return 0;
+}
+
+
+
+(다른 방법)
+#include <iostream>
+#include <string>
+using namespace std;
+
+class BasePrinter {
+protected:
+	string model, manufacturer;
+	int availableCount;
+	BasePrinter(string md="",string mf="",int count = 0) : model(md),manufacturer(mf),availableCount(count){}
+	void print(int pages) { availableCount -= pages; }
+	int getAvailableCount() { return availableCount; }
+};
+
+class InkJetPrinter : public BasePrinter {
+	int availableInk;
+public:
+	InkJetPrinter(string md="", string mf="", int count=0, int ink=0) : BasePrinter(md,mf,count), availableInk(ink) {}
+	void printInkJet(int pages)
+	{
+		if (availableInk >= pages)
+		{
+			if (getAvailableCount() >= pages)
+			{
+				print(pages);
+				availableInk -= pages;
+				cout << "프린트하였습니다." << endl;
+			}
+			else
+				cout << "용지가 부족합니다." << endl;
+		}
+		else
+			cout << "잉크가 부족합니다." << endl;
+	}
+	void show()
+	{
+		cout << model << ", " << manufacturer << ", 남은 종이 " << availableCount << "장, 남은 잉크 " << availableInk << endl;
+	}
+};
+
+class LaserPrinter : public BasePrinter {
+	int availableToner;
+public:
+	LaserPrinter(string md = "", string mf = "", int count = 0, int toner = 0) : BasePrinter(md, mf, count), availableToner(toner) {}
+	void printLaser(int pages)
+	{
+		if (availableToner >= pages)
+		{
+			if (getAvailableCount() >= pages)
+			{
+				print(pages);
+				availableToner -= pages;
+				cout << "프린트하였습니다." << endl;
+			}
+			else
+				cout << "용지가 부족합니다." << endl;
+		}
+		else
+			cout << "토너가 부족합니다." << endl;
+	}
+	void show()
+	{
+		cout << model << ", " << manufacturer << ", 남은 종이 " << availableCount << "장, 남은 토너 " << availableToner << endl;
+	}
+};
+
+int main()
+{
+	InkJetPrinter ink("Officejet40", "HP", 5, 10);
+	LaserPrinter las("SCX-6X45", "삼성전자", 3, 20);
+	
+	cout << "현재 작동중인 2 대의 프린터는 아래와 같다."
+		<< "\n잉크젯 : Officejet40, HP, 남은 종이 5장, 남은 잉크 10"
+		<< "\n레이저 : SCX-6X45, 삼성전자, 남은 종이 3장, 남은 토너 20\n\n";
+	while (true)
+	{
+		int printer, pages;
+		char menu;
+
+		cout << "\n프린터(1:잉크젯,2:레이저)와 매수 입력>> ";
+		cin >> printer >> pages;
+		switch (printer)
+		{
+		case 1:
+			ink.printInkJet(pages);
+			break;
+		case 2:
+			las.printLaser(pages);
+			break;
+		}
+
+		ink.show();
+		las.show();
+
+		cout << "계속 프린트 하시겠습니까?(y/n)>>";
+		cin >> menu;
+		if (menu == 'n')
+			break;
+	}
+	cout << "프린트를 종료합니다..." << endl;
+}

@@ -1,0 +1,478 @@
+<1번>
+#pragma once
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Shape {
+protected:
+	string name;
+	int width, height;
+public:
+	Shape(string n = "", int w = 0, int h = 0) { name = n;width = w;height = h; }
+	virtual double getArea() { return 0; }
+	string getName() { return name; }
+};
+
+#pragma once
+#include "Shape.h"
+using namespace std;
+
+class Oval :public Shape {
+public:
+	Oval(string n = "", int w = 0, int h = 0) : Shape(n,w,h) { name = n;width = w;height = h; }
+	double getArea() { return width * height * 3.14 / 4; }
+};
+
+#pragma once
+#include "Shape.h"
+using namespace std;
+
+class Rect :public Shape {
+public:
+	Rect(string n = "", int w = 0, int h = 0) : Shape(n, w, h) { name = n;width = w;height = h; }
+	double getArea() { return width * height; }
+};
+
+#pragma once
+#include "Shape.h"
+using namespace std;
+
+class Triangular :public Shape {
+public:
+	Triangular(string n = "", int w = 0, int h = 0) : Shape(n, w, h) { name = n;width = w;height = h; }
+	double getArea() { return width * height / 2; }
+};
+
+#include <iostream>
+#include <string>
+#include "Triangular.h"
+#include "Oval.h"
+#include "Rect.h"
+using namespace std;
+
+int main()
+{
+	Shape* p[3];
+	p[0] = new Oval("빈대떡", 10, 20);
+	p[1] = new Rect("찰떡", 30, 40);
+	p[2] = new Triangular("토스트", 30, 40);
+	for (int i = 0;i < 3;i++)
+		cout << p[i]->getName() << " 넓이는 " << p[i]->getArea() << endl;
+	
+	for (int i = 0;i < 3;i++)
+		delete p[i];
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<2번>
+
+#pragma once
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Shape {
+protected:
+	string name;
+	int width, height;
+public:
+	Shape(string n = "", int w = 0, int h = 0) { name = n;width = w;height = h; }
+	virtual double getArea() = 0;
+	string getName() { return name; }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<3번>
+#include <iostream>
+using namespace std;
+
+class Shape {
+	Shape* next;
+protected:
+	virtual void draw() = 0;
+public:
+	Shape() { next = NULL; }
+	virtual ~Shape() {}
+	void paint() { draw(); }
+	Shape* add(Shape* p) { this->next = p; return p; }
+	Shape* getNext() { return next; }
+};
+
+class Circle : public Shape {
+protected:
+	virtual void draw() { cout << "Circle" << endl; }
+};
+
+class Rect : public Shape {
+protected:
+	virtual void draw() { cout << "Rectangle" << endl; }
+};
+
+class Line :public Shape {
+protected:
+	virtual void draw() { cout << "Line" << endl; }
+};
+
+class UI {
+public:
+	static int getMainMenu()
+	{
+		int n;
+		cout << "삽입:1, 삭제:2, 모두보기:3, 종료: 4 >>";
+		cin >> n;
+		return n;
+	}
+	static int getShapeType()
+	{
+		int n;
+		cout << "선:1, 원:2, 사각형:3 >>";
+		cin >> n;
+		return n;
+	}
+	static int getShapeIndex()
+	{
+		int n;
+		cout << "삭제하고자 하는 도형의 인덱스 >>";
+		cin >> n;
+		return n;
+	}
+};
+
+class GraphicEditor {
+	Shape* pStart;
+	Shape* pLast;
+	enum { LINE = 1, CIRCLE = 2, RECT = 3 };
+	enum { EDIT = 1, REMOVE = 2, PAINT = 3, EXIT = 4 };
+	void add(Shape* p)
+	{
+		if (pStart == NULL)
+		{
+			pStart = p;
+			pLast = p;
+		}
+		else
+		{
+			pLast->add(p);
+			pLast = p;
+		}
+	}
+	void edit()
+	{
+		int type = UI::getShapeType();
+		switch (type)
+		{
+		case LINE:
+			add(new Line);
+			break;
+		case CIRCLE:
+			add(new Circle);
+			break;
+		case RECT:
+			add(new Rect);
+			break;
+		default:
+			cout << "잘못된 입력입니다." << endl;
+		}
+	}
+	void remove()
+	{
+		int index = UI::getShapeIndex();
+		remove(index);
+	}
+	void remove(int shapeIndex)
+	{
+		if (pStart == NULL)
+		{
+			cout << "그려진 도형 없음!" << endl;
+			return;
+		}
+		if (shapeIndex < 0)
+		{
+			cout << "잘못된 인덱스 입력!" << endl;
+			return;
+		}
+		
+		Shape* p = pStart;
+		Shape* beforeP = NULL;
+
+		for (int i = 0;i < shapeIndex;i++)
+		{
+			beforeP = p;
+			p = p->getNext();
+			if (p == NULL)
+			{
+				cout << "인덱스 초과!" << endl;
+				return;
+			}
+		}
+
+		if (p == pStart)
+		{
+			pStart = p->getNext();
+		}
+		else if (p == pLast)
+		{
+			pLast = beforeP;
+			pLast->add(NULL);
+		}
+		else
+		{
+			beforeP->add(p->getNext());
+		}
+
+		delete p;
+		cout << shapeIndex << "번째 도형이 삭제되었습니다." << endl;
+	}
+	void paint()
+	{
+		Shape* p = pStart;
+		if (p == NULL)
+		{
+			cout << "그려진 도형 없음!" << endl;
+			return;
+		}
+		
+		int i = 0;
+		while (p != NULL)
+		{
+			cout << i++ << " : ";
+			p->paint();
+			p = p->getNext();
+		}
+	}
+public:
+	GraphicEditor() { pStart = pLast = NULL; }
+	~GraphicEditor()
+	{
+		Shape* p = pStart;
+		while (p != NULL)
+		{
+			Shape* q = p->getNext();
+			delete p;
+			p = q;
+		}
+	}
+	void run()
+	{
+		cout << "그래픽 에디터입니다." << endl;
+		while (true)
+		{
+			int menu = UI::getMainMenu();
+			switch (menu)
+			{
+			case EDIT:
+				edit();
+				break;
+			case REMOVE:
+				remove();
+				break;
+			case PAINT:
+				paint();
+				break;
+			case EXIT:
+				return;
+			default:
+				cout << "잘못된 입력입니다." << endl;
+			}
+		}
+	}
+};
+
+int main()
+{
+	GraphicEditor g;
+	g.run();
+}
+
+
+(직접푼거)
+#include <iostream>
+using namespace std;
+
+class Shape {
+	Shape* next;
+protected:
+	virtual void draw() = 0;
+public:
+	Shape() { next = NULL; }
+	virtual ~Shape() {}
+	void paint() { draw(); }
+	Shape* add(Shape* p) { this->next = p; return p; }
+	Shape* getNext() { return next; }
+};
+
+class Circle : public Shape {
+protected:
+	virtual	void draw() { cout << "Circle" << endl; }
+};
+
+class Rect : public Shape {
+protected:
+	virtual void draw() { cout << "Rectangle" << endl; }
+};
+
+class Line : public Shape {
+protected:
+	virtual void draw() { cout << "Line" << endl; }
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class UI {
+public:
+	static int getMainMenu() { int n; cout << "삽입:1, 삭제:2, 모두보기:3, 종료:4 >> "; cin >> n; return n; }
+	static int getShapeType() { int n;cout << "선:1, 원:2, 사각형:3 >> "; cin >> n;return n; }
+	static int getShapeIndex() { int n; cout << "삭제하고자 하는 도형의 인덱스>> ";cin >> n;return n; }
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class GraphicEditor {
+	Shape* pStart;
+	Shape* pLast;
+	enum { LINE=1,CIRCLE=2,RECT=3 };
+	enum {INSERT=1,REMOVE=2,PAINT=3,EXIT=4};
+	void add(Shape* p) {
+		if (pStart == NULL)
+		{
+			pStart = p;
+			pLast = p;
+		}
+		else
+		{
+			pLast->add(p);
+			pLast = p;
+		}
+	}
+	void remove()
+	{
+		int n = UI::getShapeIndex();
+		remove(n);
+	}
+	void remove(int index)
+	{
+		if (index < 0)
+		{
+			cout << "음수 인덱스?" << endl;
+			return;
+		}
+		if (pStart == NULL)
+		{
+			cout << "그려진 도형 없음!" << endl;
+			return;
+		}
+
+
+		Shape* p = pStart;
+		Shape* beforeP = NULL;
+
+		for (int n=0; n<index; n++)
+		{
+			beforeP = p;
+			p = beforeP->getNext();
+			if (p == NULL)
+			{
+				cout << "인덱스 초과!" << endl;
+				return;
+			}
+		}
+
+		if (p == pStart && p == pLast)
+		{
+			pStart = pLast = NULL;
+			delete p;
+			return;
+		}
+
+		if (p == pStart)						//첫 번째 도형 지우는 경우
+		{
+			pStart = p->getNext();
+			delete p;
+			return;
+		}
+		
+		if (p == pLast)							//마지막 도형 지우는 경우
+		{
+			pLast = beforeP;
+			pLast->add(NULL);
+			delete p;
+			return;
+		}
+
+		//중간 도형 지우는 경우
+		beforeP->add(p->getNext());
+		delete p;
+
+		cout << index << "번째 도형이 삭제되었습니다." << endl;
+	}
+	void paint()
+	{
+		if (pStart == NULL)
+			cout << "그려진 도형 없음!" << endl;
+		else
+		{
+			Shape* p = pStart;
+			int n = 0;
+			while (p != NULL)
+			{
+				cout << n++ << ':'; p->paint();
+				cout << endl;
+				p = p->getNext();
+			}
+		}
+	}
+public:
+	GraphicEditor() { pStart = pLast = NULL; }
+	void run()
+	{
+		cout << "그래픽 에디터입니다." << endl;
+		while (true)
+		{
+			int menu = UI::getMainMenu();
+			if (menu == EXIT)
+				break;
+			switch (menu)
+			{
+			case INSERT:
+			{
+				int type = UI::getShapeType();
+				switch (type)
+				{
+				case LINE:
+					add(new Line);
+					break;
+				case CIRCLE:
+					add(new Circle);
+					break;
+				case RECT:
+					add(new Rect);
+					break;
+				default:
+					cout << "잘못된 입력입니다." << endl;
+					break;
+				}
+				break;
+			}
+			case REMOVE:
+				remove();
+				break;
+			case PAINT:
+				paint();
+				break;
+			default:
+				cout << "잘못된 입력입니다." << endl;
+				break;
+			}
+		}
+		cout << "종료합니다." << endl;
+	}
+};
+
+int main()
+{
+	GraphicEditor g;
+	g.run();
+}
